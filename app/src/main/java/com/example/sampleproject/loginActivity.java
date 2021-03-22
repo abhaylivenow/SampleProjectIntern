@@ -32,6 +32,7 @@ public class loginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // initialize views
         btnSignIn = findViewById(R.id.btn_signUp);
         btnLogIn = findViewById(R.id.btn_login);
         edtEmail = findViewById(R.id.login_email_edt);
@@ -39,6 +40,7 @@ public class loginActivity extends AppCompatActivity {
         txtForgetPass = findViewById(R.id.txt_forget_password);
         loadingBar = new ProgressDialog(loginActivity.this);
 
+        // handle onclick on buttons
         btnLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,10 +64,13 @@ public class loginActivity extends AppCompatActivity {
         });
 
     }
+    // login user method
     private void loginUser(){
+        // get data coming from text fields
         String email = edtEmail.getText().toString();
         String password = edtPassword.getText().toString();
 
+        // check for general errors
         if(TextUtils.isEmpty(email)){
             Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show();
         }
@@ -77,6 +82,8 @@ public class loginActivity extends AppCompatActivity {
             loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
 
+            // get instance of firebase Auth
+            // sign in using FirebaseAuth
             mAuth = FirebaseAuth.getInstance();
             mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -92,6 +99,8 @@ public class loginActivity extends AppCompatActivity {
             });
         }
     }
+    // method for resetting password
+    // an email will be sent for resetting password
     private void resetPassword(){
         mAuth = FirebaseAuth.getInstance();
         String email = edtEmail.getText().toString();
@@ -102,6 +111,7 @@ public class loginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
+                    // handle if the task is successful
                     Toast.makeText(loginActivity.this, "Check your email", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(loginActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();

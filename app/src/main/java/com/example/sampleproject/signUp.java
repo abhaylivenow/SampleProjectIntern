@@ -39,6 +39,7 @@ public class signUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        // initialize all the views
         edtEmail = findViewById(R.id.signIn_email);
         edtUsername = findViewById(R.id.signIn_Username);
         edtPassword = findViewById(R.id.signIn_password_edt);
@@ -48,6 +49,7 @@ public class signUp extends AppCompatActivity {
         btnSignUp = findViewById(R.id.btn_signIn);
         loadingBar = new ProgressDialog(signUp.this);
 
+        // handle onclick on signUp button
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +58,9 @@ public class signUp extends AppCompatActivity {
         });
     }
 
+    // this method uses FirebaseAuth inbuilt method to create user
     private void createAccount() {
+        // get all the data coming from text fields
         final String email = edtEmail.getText().toString();
         final String username = edtUsername.getText().toString();
         final String password = edtPassword.getText().toString();
@@ -64,6 +68,7 @@ public class signUp extends AppCompatActivity {
         final String city = edtCity.getText().toString();
         final String age = edtAge.getText().toString();
 
+        // check for general errors
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
         }
@@ -84,16 +89,20 @@ public class signUp extends AppCompatActivity {
         }
         if (confirmPassword.equals(password)) {
 
+            // show loading bar
             loadingBar.setTitle("Please wait");
             loadingBar.setMessage("Please wait while we check credentials");
             loadingBar.show();
 
+            // get the instance of FirebaseAuth
             mAuth = FirebaseAuth.getInstance();
 
+            // use inbuilt method of FirebaseAuth to create user
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(signUp.this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        // handle if the task is successful
                         Intent intent = new Intent(signUp.this, loginActivity.class);
                         startActivity(intent);
 
@@ -106,9 +115,12 @@ public class signUp extends AppCompatActivity {
                 }
             });
 
+            // get the reference of firebase database
+            // these below codes saves user data into firebase database
             final DatabaseReference mRef;
             mRef = FirebaseDatabase.getInstance().getReference();
 
+            // add the data to the database at the same time user is signed in
             mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
